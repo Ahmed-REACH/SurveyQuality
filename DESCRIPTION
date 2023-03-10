@@ -1,0 +1,16 @@
+Package: myfirstpackage
+Title: IMPACTR
+Version: 0.0.0.1000
+Date: 2023-03-01
+Authors@R: 
+    person("Ahmed", "Slama", , "ahmed.slama@impact-initiatives.org", role = c("aut", "cre"),
+           )
+Description: Data Collection, Monitoring, and Quality for NGOs..
+License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
+    license
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Imports:
+  dplyr,
+  tibble
