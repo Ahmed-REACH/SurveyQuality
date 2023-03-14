@@ -38,6 +38,8 @@ check_duplicate_uuid_krap <- function(data = NULL,
   t1$ymax <- cumsum(t1$fraction)
   t1$ymin <- c(0, utils::head(t1$ymax, n=-1))
 
+
+
   graph  <- ggplot2::ggplot(t1, ggplot2::aes(fill=categories,
                                              ymax=ymax,
                                              ymin=ymin,
