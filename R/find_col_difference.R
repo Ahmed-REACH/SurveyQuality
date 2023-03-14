@@ -26,10 +26,10 @@
 
 
 
-find_different_columns <- function(data,
-                                        identifier="identifier",
-                                        value,
-                                        value2=NULL) {
+find_col_difference <- function(data,
+                                identifier="identifier",
+                                value,
+                                value2=NULL) {
 
   if(is.null(data) | nrow(data)<=1 | !is.data.frame(data)){
     stop("Please provide the dataset. Dataset should contain at least 2 surveys/rows")
