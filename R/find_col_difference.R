@@ -1,5 +1,6 @@
 #' Find difference between two submitted surveys
 #'
+#' @description
 #' This function returns a string containing all column names where values are different between surveys.
 #' The function takes as arguments a dataframe, name of the unique identifier column, and 2 survey ID (1 mandatory, 1 optional).
 #'

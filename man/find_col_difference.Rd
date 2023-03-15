@@ -21,8 +21,7 @@ A character string containing the names of the columns that are different. colum
 \description{
 This function returns a string containing all column names where values are different between surveys.
 The function takes as arguments a dataframe, name of the unique identifier column, and 2 survey ID (1 mandatory, 1 optional).
-}
-\details{
+
 Note: if you are comparing two surveys with the same identifier, only one identifier is needed.
 }
 \examples{
