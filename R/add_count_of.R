@@ -1,4 +1,4 @@
-#' Find number of occurrences of a string in surveys
+#' counts the number of occurrences of an answer in surveys
 #'
 #' @description
 #' This function returns a vector containing the number of occurrences of a user-defined string (e.g. "Prefer not to answer") per survey throughout the dataframe.
@@ -10,7 +10,7 @@
 #'
 #'
 #' @param data dataframe containing survey data.
-#' @param string character string that will be counted.
+#' @param string character string that will be counted. Regex allowed.
 #'
 #'
 #' @return A character vector having the count of occurrence of the string.
@@ -29,6 +29,7 @@
 add_count_of <- function(data,
                          string) {
 
+  # Preparation: input checks
   if(is.null(data) | nrow(data)<1 | !is.data.frame(data)){
     stop("Please provide the dataset. Dataset should contain at least 1 survey/row")
   }
@@ -37,7 +38,50 @@ add_count_of <- function(data,
   }
 
 
-  string__count <- apply(data, 1, function(x) sum(grepl(paste0("^",string,"$"), x)))
+  # Preparation: add Regex to string if inexistent
+  string <- tolower(trimws(string, which = "both"))
+
+  if (!grepl("\\$$", string) ) {
+    string <- paste0(string,"$")
+
+  } else if (!grepl("\\^", string) ) {
+    string <- paste0("^", string)
+
+  } else if (grepl("\\|", string) ) {
+    tmp<- stringr::str_split_1(string) %>%
+          stringr::str_replace_all(., "^","") %>%
+          stringr::str_replace_all(., "$","")
+    string <- paste0("^",
+                     paste(string, sep = "", collapse = "$|^"),
+                     "$"
+                     )
+  } else {
+    string <- string
+  }
+
+
+
+  data<- data %>% stats::setNames(gsub("\\/|\\.",".",names(.)))
+
+  questions_answers <- kobo_survey %>%
+                        dplyr::select(type, name) %>%
+                        dplyr::rename(question_name = name) %>%
+                        tidyr::separate(., col = "type", into = c("type", "list_name")) %>%
+       dplyr::right_join(.,
+                      kobo_choices %>%
+                        dplyr::mutate(answer_name = tolower(name)) %>%
+                        dplyr::select(list_name, answer_name),
+                      by = "list_name"
+                      )
+
+
+  denominator <- questions_answers %>%
+    filter(grepl(string, answer_name)) %>%
+    select(question_name) %>% unique()
+
+
+
+  string__count <- apply(data, 1, function(x) sum(grepl(string), x))
 
 
   return(string__count)
