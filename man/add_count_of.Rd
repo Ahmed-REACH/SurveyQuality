@@ -2,28 +2,32 @@
 % Please edit documentation in R/add_count_of.R
 \name{add_count_of}
 \alias{add_count_of}
-\title{Find number of occurrences of a string in surveys}
+\title{counts the number of occurrences of an answer in surveys}
 \usage{
-add_count_of(data, string)
+add_count_of(data, string, survey_df, choices_df)
 }
 \arguments{
 \item{data}{dataframe containing survey data.}
 
-\item{string}{character string that will be counted.}
+\item{string}{character string that will be counted. Regex allowed.}
+
+\item{survey_df}{dataframe containing ´survey´ sheet of the XLS form.}
+
+\item{choices_df}{dataframe containing ´choices´ sheet of the XLS form.}
 }
 \value{
-A character vector having the count of occurrence of the string.
+A numeric vector having the count of occurrence of the string.
 }
 \description{
-This function returns a vector containing the number of occurrences of a user-defined string (e.g. "Prefer not to answer") per survey throughout the dataframe.
-The function takes as arguments a dataframe, the string looked for.
+This function returns a vector containing the number of occurrences of a user-defined string (e.g. "don´t want to answer") per survey throughout the dataframe.
+The function takes as arguments a dataframe, the string looked for, survey and choices sheets of the XLS forms.
 
-Note: the string needs to be harmonized across the dataframe. E.g. "don´t want to asnwer" should always be stored on the dataframe as "don´t want to answer".
+Note: the string needs to be harmonized across the dataframe. E.g. "other" should always be stored on the dataframe as "other". Hoyever, you can use regex to find "other" and its alternatives e.g. "other_specify".
 }
 \examples{
 # Get the number of occurrences of "don´t want to answer" (stored as "dwta" on the dataframe).
-\code{n} data <- data \%>\% mutate(check_nb_dwta = add_count_of(., "dwta"))
+\code{n} data <- data \%>\% mutate(check_nb_dwta = add_count_of(., "dwta", kobo_survey, kobo_choices))
 
 # Get the names of occurrences of "dont_know".
-\code{n} data <- data \%>\% mutate(check_nb_dk = add_count_of(., "dont_know"))
+\code{n} data <- data \%>\% mutate(check_nb_dk = add_count_of(., "dont_know", kobo_survey, kobo_choices))
 }
