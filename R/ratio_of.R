@@ -1,7 +1,7 @@
-#' counts the number of occurrences of an answer in surveys
+#' Find count ratio of an answer option throughout surveys
 #'
 #' @description
-#' This function returns a vector containing the number of occurrences of a user-defined string (e.g. "don´t want to answer") per survey throughout the dataframe.
+#' This function returns a vector containing the count and ratio of a user-defined string (e.g. "other") per survey.
 #' The function takes as arguments a dataframe, the string looked for, survey and choices sheets of the XLS forms.
 #'
 #'
@@ -15,21 +15,21 @@
 #' @param choices_df dataframe containing ´choices´ sheet of the XLS form.
 #'
 #'
-#' @return A numeric vector having the count of occurrence of the string.
+#' @return A numeric vector having the ratio(%) of occurrence of the string.
 #' @export
 #'
 #' @examples
-#' # Get the number of occurrences of "don´t want to answer" (stored as "dwta" on the dataframe).
-#' \code{n} data <- data %>% mutate(check_nb_dwta = add_count_of(., "dwta", kobo_survey, kobo_choices))
+#' # Get the ratio of "other" (stored as "other" on the dataframe).
+#' \code{n} data <- data %>% mutate(check_others_ratio = ratio_of(., "dwta", kobo_survey, kobo_choices))
 #'
-#' # Get the names of occurrences of "dont_know".
-#' \code{n} data <- data %>% mutate(check_nb_dk = add_count_of(., "dont_know", kobo_survey, kobo_choices))
+#' # Get the ratio of "other" and its alternatives.
+#' \code{n} data <- data %>% mutate(check_others_etc_ratio = ratio_of(., "dont_know", kobo_survey, kobo_choices))
 
 
-add_count_of <- function(data,
-                         string,
-                         survey_df,
-                         choices_df) {
+ratio_of <- function(data,
+                     string,
+                     survey_df,
+                     choices_df) {
 
   # Preparation: input checks
   if(is.null(data) | nrow(data)<1 | !is.data.frame(data)){
@@ -60,12 +60,12 @@ add_count_of <- function(data,
 
   } else if (grepl("\\|", string) ) {
     tmp<- stringr::str_split_1(string) %>%
-          stringr::str_replace_all(., "^","") %>%
-          stringr::str_replace_all(., "$","")
+      stringr::str_replace_all(., "^","") %>%
+      stringr::str_replace_all(., "$","")
     string <- paste0("^",
                      paste(tmp, sep = "", collapse = "$|^"),
                      "$"
-                     )
+    )
   } else {
     string <- string
   }
@@ -77,15 +77,15 @@ add_count_of <- function(data,
     stats::setNames(gsub("\\/|\\.",".",names(.)))
 
   questions_answers <- survey_df %>%
-                        dplyr::select(type, name) %>%
-                        dplyr::rename(question_name = name) %>%
-                        tidyr::separate(., col = "type", into = c("type", "list_name")) %>%
-       dplyr::right_join(.,
+    dplyr::select(type, name) %>%
+    dplyr::rename(question_name = name) %>%
+    tidyr::separate(., col = "type", into = c("type", "list_name")) %>%
+    dplyr::right_join(.,
                       choices_df %>%
                         dplyr::mutate(answer_name = tolower(name)) %>%
                         dplyr::select(list_name, answer_name),
                       by = "list_name"
-                      )
+    )
 
   sm_questions <-  questions_answers %>%
     dplyr::filter(type=="select_multiple") %>%
@@ -101,10 +101,22 @@ add_count_of <- function(data,
   string__count_selectmultiple <- data %>%
     dplyr::mutate(
       string__count_selectmultiple_tmp = rowSums(select(., tidyselect::ends_with(cols_mul)))
-      )
+    )
 
 
-  return(string__count_selectone+string__count_selectmultiple)
+  unique_questions <- questions_answers %>%
+    dplyr::filter(grepl(string, answer_name)) %>%
+    dplyr::pull(question_name) %>% unique()
+
+  numerator <- string__count_selectone+string__count_selectmultiple
+
+  denominator <- rep(length(unique_questions), nrow(data))
+
+  ratio <- round(100*numerator/denominator, digits = 3)
+
+
+  return(ratio)
 }
 
 # devtools::document()
+

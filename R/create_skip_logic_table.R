@@ -26,8 +26,34 @@ create_skip_logic_table <- function(survey_df) {
 
 
   # Preparation: cleaning up column names
-  survey_df <- survey_df %>%
-    dplyr::filter( !is.na(relevant) | !relevant %in% c("","NA","N/A") )
+  skip_df <- survey_df %>%
+    dplyr::mutate(type = trimws(type, which = "both")) %>%
+    dplyr::select(type, name,relevant) %>%
+    dplyr::filter( !relevant %in% c(NA,"","NA","N/A") ) %>%
+    tidyr::separate(col = type, into = c("type", "list_name"), sep = " ")
+
+  skip_df<- skip_df %>%
+    dplyr::mutate(
+    relevant_formatted = stringr::str_replace_all(relevant,
+                                          c(" and | AND | And " = " & ",
+                                            " or | OR | Or " = " | ",
+                                            "selected(${" = "stringr::str_detect(",
+                                            "}, '|},'|} , '|} ,'" = ", '",
+                                            "(?<!\\>)\\=|(?<!\\<)\\=|(?<!\\!)\\=|(?<!\\=)\\=" = "==",
+                                            "NOT(|not(|Not(" = "!("
+                                          )
+
+                                          # c(" & ",
+                                          #   " | ",
+                                          #   "stringr::str_detect(",
+                                          #   ", '",
+                                          #   "==",
+                                          #   "!("
+                                          #   )
+    )
+  )
+
+
 
 
 

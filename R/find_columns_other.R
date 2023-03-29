@@ -19,6 +19,14 @@
 
 find_columns_other <- function(data, survey_df) {
 
+  if(is.null(data) | nrow(data)<=1 | !is.data.frame(data)){
+    stop("Please provide the dataset. Dataset should contain at least 2 surveys/rows")
+  }
+  if(!is.data.frame(survey_df) | is.null(survey_df) |
+     sum(stringr::str_detect(names(survey_df), "^type$|^name$") )<2 ){
+    stop("Please provide the dataframe holding the survey sheet of your XLS form with column names unchanged")
+  }
+
 
   # Preparation: cleaning up column names
   data<- data %>%
@@ -32,7 +40,7 @@ find_columns_other <- function(data, survey_df) {
     dplyr::filter(type == "text") %>%
     pull(name)
 
-  others <- potential_others[which(potential_others %in% text_vars)]
+  others <- text_vars[which(text_vars %in% potential_others)]
 
 
   return(others)
