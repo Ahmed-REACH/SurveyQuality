@@ -14,7 +14,7 @@
 #'
 #' @examples
 #' # Get the column names of text "other" .
-#' \code{n} columns_other <- find_columns_other(data, kobo_survey)
+#' \code columns_other <- find_columns_other(data, kobo_survey)
 
 
 find_columns_other <- function(data, survey_df) {

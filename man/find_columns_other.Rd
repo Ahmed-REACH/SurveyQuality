@@ -19,5 +19,5 @@ This function returns a vector containing the names of columns that end with "ot
 }
 \examples{
 # Get the column names of text "other" .
-\code{n} columns_other <- find_columns_other(data, kobo_survey)
+\code columns_other <- find_columns_other(data, kobo_survey)
 }

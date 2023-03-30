@@ -26,8 +26,8 @@ Note: if you are comparing two surveys with the same identifier, only one identi
 }
 \examples{
 # Get the names of questions that have different responses on surveys. Fetching by 1 identifier i.e. surveys with duplicate identifier.
-\code{n} names <- find_different_columns(data, "identifier", "3681f44c-8f1f-49b0-1dzc-6f741d087b24")
+\code names <- find_different_columns(data, "identifier", "3681f44c-8f1f-49b0-1dzc-6f741d087b24")
 
 # Get the names of questions that have different responses on surveys. Fetching by 2 different identifiers
-\code{n} names <- find_different_columns(data, "identifier", "3681f44c-8f1f-49b0-1dzc-6f741d087b24", "a211f44a-9d1f-94b0-10dc-6f741d811b29")
+\code names <- find_different_columns(data, "identifier", "3681f44c-8f1f-49b0-1dzc-6f741d087b24", "a211f44a-9d1f-94b0-10dc-6f741d811b29")
 }

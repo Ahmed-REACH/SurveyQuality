@@ -26,8 +26,8 @@ Note: the string needs to be harmonized across the dataframe. E.g. "other" shoul
 }
 \examples{
 # Get the ratio of "other" (stored as "other" on the dataframe).
-\code{n} data <- data \%>\% mutate(check_others_ratio = ratio_of(., "dwta", kobo_survey, kobo_choices))
+\code data <- data \%>\% mutate(check_others_ratio = ratio_of(., "dwta", kobo_survey, kobo_choices))
 
 # Get the ratio of "other" and its alternatives.
-\code{n} data <- data \%>\% mutate(check_others_etc_ratio = ratio_of(., "dont_know", kobo_survey, kobo_choices))
+\code data <- data \%>\% mutate(check_others_etc_ratio = ratio_of(., "dont_know", kobo_survey, kobo_choices))
 }

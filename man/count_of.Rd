@@ -26,8 +26,8 @@ Note: the string needs to be harmonized across the dataframe. E.g. "other" shoul
 }
 \examples{
 # Get the number of occurrences of "don´t want to answer" (stored as "dwta" on the dataframe).
-\code{n} data <- data \%>\% mutate(check_nb_dwta = count_of(., "dwta", kobo_survey, kobo_choices))
+\code data <- data \%>\% mutate(check_nb_dwta = count_of(., "dwta", kobo_survey, kobo_choices))
 
 # Get the names of occurrences of "dont_know".
-\code{n} data <- data \%>\% mutate(check_nb_dk = count_of(., "dont_know", kobo_survey, kobo_choices))
+\code data <- data \%>\% mutate(check_nb_dk = count_of(., "dont_know", kobo_survey, kobo_choices))
 }
