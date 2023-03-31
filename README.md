@@ -1,2 +1,2 @@
-# IMPACTR
- Data Collection, Monitoring, and Quality for NGOs..
+# SurveyQuality
+ A toolbox for various data quality checks on survey data.
