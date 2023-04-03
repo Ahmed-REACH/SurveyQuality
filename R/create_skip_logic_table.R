@@ -29,7 +29,7 @@ create_skip_logic_table <- function(survey_df) {
   skip_df <- survey_df %>%
     dplyr::mutate(type = trimws(type, which = "both")) %>%
     dplyr::select(type, name,relevant) %>%
-    dplyr::filter( !relevant %in% c(NA,"","NA","N/A") ) %>%
+    dplyr::filter( !relevant %in% c(NA,"","NA","N/A") | stringr::str_detect(type,"group$")  ) %>%
     tidyr::separate(col = type, into = c("type", "list_name"), sep = " ")
 
   skip_df<- skip_df %>%
@@ -37,22 +37,35 @@ create_skip_logic_table <- function(survey_df) {
     relevant_formatted = stringr::str_replace_all(relevant,
                                           c(" and | AND | And " = " & ",
                                             " or | OR | Or " = " | ",
-                                            "selected(${" = "stringr::str_detect(",
-                                            "}, '|},'|} , '|} ,'" = ", '",
+                                            "selected\\(\\$\\{" = "stringr::str_detect(",
+                                            "\\}\\, \\'|\\}\\,\\'|\\} \\, \\'|\\} \\,\\'" = ", '",
                                             "(?<!\\>)\\=|(?<!\\<)\\=|(?<!\\!)\\=|(?<!\\=)\\=" = "==",
-                                            "NOT(|not(|Not(" = "!("
+                                            "NOT\\(|not\\(|Not\\(" = "!(",
+                                            "\\$\\{|\\}" = "",
+                                            "\\>\\=\\=" = ">=",
+                                            "\\<\\=\\=" = "<=",
+                                            "\\!\\=\\=" = "!=",
+                                            "\\'(?![[:graph:]]+)" = "')",
+                                            "\\=\\=\\s*\\'" = ",'"
                                           )
-
-                                          # c(" & ",
-                                          #   " | ",
-                                          #   "stringr::str_detect(",
-                                          #   ", '",
-                                          #   "==",
-                                          #   "!("
-                                          #   )
     )
-  )
-
+  ) %>%
+    mutate(
+      relevant_formatted = dplyr::if_else(
+        (stringr::str_detect(relevant_formatted,"\\,\\'") & !stringr::str_detect(relevant_formatted,"stringr\\:\\:str")),
+        stringr::str_replace_all(relevant_formatted, "^\\s*(?=[[:graph:]]+\\s*\\,\\s*\\s*\\')","stringr::str_detect("),
+        relevant_formatted
+      )
+    ) %>%
+    mutate(
+      relevant_formatted = dplyr::if_else(
+        (stringr::str_detect(relevant_formatted,"\\'") & !stringr::str_detect(relevant_formatted,"stringr\\:\\:str") & stringr::str_detect(relevant_formatted,"\\!\\=") ),
+        stringr::str_replace_all(relevant_formatted,
+                                 c("^\\s*(?=[[:graph:]]+\\s*\\!\\=\\s*\\s*\\')" = "!stringr::str_detect(",
+                                   "\\!\\=" = ","
+                                   )),
+        relevant_formatted)
+    )
 
 
 
