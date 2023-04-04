@@ -14,7 +14,7 @@
 #'
 #' @examples
 #' # Creates input for cleaning up the questions based on skip logic.
-#' \code{n} columns_other <- find_columns_other(data, kobo_survey)
+#' \code columns_other <- find_columns_other(data, kobo_survey)
 
 
 create_skip_logic_table <- function(survey_df) {

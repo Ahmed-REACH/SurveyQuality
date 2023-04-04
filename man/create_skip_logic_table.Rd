@@ -18,5 +18,5 @@ NOTE: Only questions with skip logic are returned.
 }
 \examples{
 # Creates input for cleaning up the questions based on skip logic.
-\code{n} columns_other <- find_columns_other(data, kobo_survey)
+\code columns_other <- find_columns_other(data, kobo_survey)
 }
