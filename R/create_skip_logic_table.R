@@ -54,8 +54,21 @@ create_skip_logic_table <- function(survey_df) {
       relevant_formatted = dplyr::if_else(
         (stringr::str_detect(relevant_formatted,"\\,\\'") & !stringr::str_detect(relevant_formatted,"stringr\\:\\:str")),
         stringr::str_replace_all(relevant_formatted,
-                                 "^\\s*(?=[[:graph:]]+\\s*\\,\\s*\\s*\\')|^\\s*(?=[[:graph:]]+\\s*\\=\\s*\\s*\\')",
+                                 "^\\s*(?=[[:graph:]]+\\s*\\,\\s*\\')|^\\s*(?=[[:graph:]]+\\s*\\=\\s*\\')",
                                  "stringr::str_detect("),
+        relevant_formatted
+      )
+    ) %>%
+    mutate(
+      relevant_formatted = dplyr::if_else(
+        (stringr::str_count(relevant_formatted, "\\,\\s*\\'") - stringr::str_count(relevant_formatted, "stringr\\:\\:str")) !=0,
+        stringr::str_replace_all(relevant_formatted,
+                                 c(
+                                   "\\&\\s*([[:graph:]]+)\\s*\\,\\s*\\'" = "& stringr::str_detect(\\2,'",
+                                   "\\|\\s*([[:graph:]]+)\\s*\\,\\s*\\'" = "| stringr::str_detect(\\2,'"
+                                 )),
+                                 # "([[:punct:]]\\s+)([[:graph:]]+)\\s*\\,\\s*\\'",
+                                 # "\\1stringr::str_detect(\\2,'"),
         relevant_formatted
       )
     ) %>%
@@ -63,9 +76,8 @@ create_skip_logic_table <- function(survey_df) {
       relevant_formatted = dplyr::if_else(
         (stringr::str_detect(relevant_formatted,"\\'") & !stringr::str_detect(relevant_formatted,"stringr\\:\\:str") & stringr::str_detect(relevant_formatted,"\\!\\=") ),
         stringr::str_replace_all(relevant_formatted,
-                                 c("^\\s*(?=[[:graph:]]+\\s*\\!\\=\\s*\\s*\\')" = "!stringr::str_detect(",
-                                   "\\!\\=" = ","
-                                   )),
+                                 "([[:graph:]]+)\\s*\\!\\=\\s*\\'",
+                                 "!stringr::str_detect(\\1\\,'"),
         relevant_formatted)
     )
 
