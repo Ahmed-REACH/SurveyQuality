@@ -14,9 +14,9 @@ A dataframe containing the names of the survey questions, their types, and their
 }
 \description{
 This function returns dataframe containing the question names, question type, and cleaned skip logic based on the the survey sheet of the XLS form.
-NOTE: Only questions with skip logic are returned.
+NOTE: Only questions with question-level defined skip logic are returned.
 }
 \examples{
 # Creates input for cleaning up the questions based on skip logic.
-\code columns_other <- find_columns_other(data, kobo_survey)
+\code skip_logic_t <- create_skip_logic_table(kobo_survey)
 }

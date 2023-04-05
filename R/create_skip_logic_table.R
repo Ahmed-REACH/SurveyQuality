@@ -2,7 +2,7 @@
 #'
 #' @description
 #' This function returns dataframe containing the question names, question type, and cleaned skip logic based on the the survey sheet of the XLS form.
-#' NOTE: Only questions with skip logic are returned.
+#' NOTE: Only questions with question-level defined skip logic are returned.
 #'
 #'
 #'
@@ -14,7 +14,7 @@
 #'
 #' @examples
 #' # Creates input for cleaning up the questions based on skip logic.
-#' \code columns_other <- find_columns_other(data, kobo_survey)
+#' \code skip_logic_t <- create_skip_logic_table(kobo_survey)
 
 
 create_skip_logic_table <- function(survey_df) {
@@ -70,7 +70,7 @@ create_skip_logic_table <- function(survey_df) {
 
 
 
-  return(survey_df)
+  return(skip_df)
 }
 
 
