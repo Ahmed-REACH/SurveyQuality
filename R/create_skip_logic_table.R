@@ -54,7 +54,8 @@ create_skip_logic_table <- function(survey_df) {
                                             "stringr\\:\\:str\\_detect\\(stringr\\:\\:str\\_detect\\(" = "stringr::str_detect(",
                                             "stringr\\:\\:str\\_detect\\(stringr\\:\\:str\\_detect\\("= "stringr::str_detect(",
                                             "\\‘|\\’|\\‛|\\´|\\`" = "'",
-                                            "\\(\\(" = "("
+                                            "\\(\\(" = "(",
+                                            "stringr\\:\\:str\\_detect\\(([[:graph:]]+)\\,\\'\\'\\)"= "is.na(\\1)"
                                           )
     )
     )
