@@ -52,7 +52,9 @@ create_skip_logic_table <- function(survey_df) {
                                             "\\s*([[:graph:]]+)\\s*\\=\\s*\\'" = " stringr::str_detect(\\1,'",
                                             "stringr\\:\\:str\\_detect\\(\\!stringr\\:\\:str\\_detect\\(" = "!stringr::str_detect(",
                                             "stringr\\:\\:str\\_detect\\(stringr\\:\\:str\\_detect\\(" = "stringr::str_detect(",
-                                            "\\‘|\\’|\\‛|\\´|\\`" = "'"
+                                            "stringr\\:\\:str\\_detect\\(stringr\\:\\:str\\_detect\\("= "stringr::str_detect(",
+                                            "\\‘|\\’|\\‛|\\´|\\`" = "'",
+                                            "\\(\\(" = "("
                                           )
     )
     )
@@ -69,7 +71,7 @@ create_skip_logic_table <- function(survey_df) {
 
 
 
-#' Applies skip logic to dataframe
+#' Applies skip logic to dataframe (Work in progress)
 #'
 #' @description
 #' This function returns the new dataset with the skip logic applied to the columns.
@@ -115,19 +117,32 @@ apply_skip_logic <- function(data,
   formula_col <- trimws(formula_col, "both")
   start_data <- data
   skip_table <- skip_logic_table %>%
-    dplyr::filter(name %in% names(data)) %>%
-    dplyr::mutate(formula_to_apply = paste0(name, " =  dplyr::if_else(",formula_col,", ", name,", NA )"))
+    dplyr::mutate(
+      relevant_formatted = stringr::str_replace_all(relevant_formatted,
+                                                    c("stringr\\:\\:str\\_detect\\(\\!stringr\\:\\:str\\_detect\\(" = "!stringr::str_detect(",
+                                                      "stringr\\:\\:str\\_detect\\(stringr\\:\\:str\\_detect\\(" = "stringr::str_detect(",
+                                                      "stringr\\:\\:str\\_detect\\(stringr\\:\\:str\\_detect\\("= "stringr::str_detect(",
+                                                      "\\‘|\\’|\\‛|\\´|\\`" = "'",
+                                                      "\\(\\(" = "(")
+      )
+    ) %>%
+    dplyr::filter(!is.na(name) & name %in% names(data) & !is.na(!!sym(formula_col)))
 
 
-  new_data <- purrr::map_dfc(skip_table, ~ data %>%
-                               dplyr::mutate(!!sym(.x) = eval(parse(text = .x), envir = .)
-                     )
-              )
-
-  change_log <- generate_change_log(start_data, new_data)
 
 
-  return_list[["data"]] <- new_data
+  for (aa in unique(skip_table$name)) {
+    try(
+      data[which(eval(parse(text = skip_table[skip_table$name==aa, formula_col]), envir = data)), aa] <- NA
+    )
+  }
+
+
+
+  change_log <- generate_change_log(start_data, data)
+
+
+  return_list[["data"]] <- data
   return_list[["change_log"]] <- change_log
 
   return(return_list)
