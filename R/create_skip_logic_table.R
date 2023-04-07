@@ -50,7 +50,8 @@ create_skip_logic_table <- function(survey_df) {
                                             "\\s*([[:graph:]]+)\\s*\\!\\=\\s*\\'" = " !stringr::str_detect(\\1,'",
                                             "\\s*([[:graph:]]+)\\s*\\,\\s*\\'" = " stringr::str_detect(\\1,'",
                                             "\\s*([[:graph:]]+)\\s*\\=\\s*\\'" = " stringr::str_detect(\\1,'",
-                                            "stringr\\:\\:str\\_detect\\(\\!stringr\\:\\:str\\_detect\\(" = "!stringr::str_detect("
+                                            "stringr\\:\\:str\\_detect\\(\\!stringr\\:\\:str\\_detect\\(" = "!stringr::str_detect(",
+                                            "stringr\\:\\:str\\_detect\\(stringr\\:\\:str\\_detect\\(" = "stringr::str_detect("
                                           )
     )
     )
@@ -59,6 +60,74 @@ create_skip_logic_table <- function(survey_df) {
 
 
   return(skip_df)
+}
+
+
+
+
+
+#' Applies skip logic to dataframe
+#'
+#' @description
+#' This function returns the new dataset with the skip logic applied to the columns.
+#' NOTE: Ignores group skip logic. Only questions with question-level skip logic is considered.
+#'
+#'
+#'
+#' @param survey_df dataframe containing ´survey´ sheet of the XLS form.
+#'
+#'
+#' @return A list of two objects: 1. dataframe with skip logic applied. 2. change log
+#' @export
+#'
+#' @examples
+#' # Empties replies in certain questions based on skip logic.
+#' \code data_cleaned <- apply_skip_logic(data, skip_logic_t, formula_col = "relevant_R")
+
+
+apply_skip_logic <- function(data,
+                             skip_logic_table,
+                             formula_col) {
+
+
+  if(is.null(data) | nrow(data)<=1 | !is.data.frame(data)){
+    stop("Please provide the dataset. Dataset should contain at least 2 surveys/rows.")
+  }
+
+  if(is.null(formula_col) | !is.character(formula_col) |
+     sum(stringr::str_detect(names(skip_logic_table), paste0("^", trimws(formula_col, "both"), "$")) )!=1 ){
+    stop("Please provide the column name holding the skip logic in R syntax. You can use funtion ´create_skip_logic_table´ to generate this column.")
+  }
+
+  if(is.null(skip_logic_table) | !is.data.frame(skip_logic_table) |
+     sum(stringr::str_detect(names(skip_logic_table), paste0("^type$|^name$|^", trimws(formula_col,"both"), "$")) )<3 ){
+    stop("Please provide the dataframe holding the ´skip logic table´. You can use funtion ´create_skip_logic_table´ to generate this dataframe. Or input dataframe with columns ´type´, ´name´, ´formula´(XLS form relevant column but in R syntax)")
+  }
+
+
+
+
+  ## Prep
+  return_list <- list()
+  formula_col <- trimws(formula_col, "both")
+  start_data <- data
+  skip_table <- skip_logic_table %>%
+    dplyr::filter(name %in% names(data)) %>%
+    dplyr::mutate(formula_to_apply = paste0(name, " =  dplyr::if_else(",formula_col,", ", name,", NA )"))
+
+
+  new_data <- purrr::map_dfc(skip_table, ~ data %>%
+                               dplyr::mutate(!!sym(.x) = eval(parse(text = .x), envir = .)
+                     )
+              )
+
+  change_log <- generate_change_log(start_data, new_data)
+
+
+  return_list[["data"]] <- new_data
+  return_list[["change_log"]] <- change_log
+
+  return(return_list)
 }
 
 
