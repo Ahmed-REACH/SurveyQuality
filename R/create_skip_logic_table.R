@@ -51,7 +51,8 @@ create_skip_logic_table <- function(survey_df) {
                                             "\\s*([[:graph:]]+)\\s*\\,\\s*\\'" = " stringr::str_detect(\\1,'",
                                             "\\s*([[:graph:]]+)\\s*\\=\\s*\\'" = " stringr::str_detect(\\1,'",
                                             "stringr\\:\\:str\\_detect\\(\\!stringr\\:\\:str\\_detect\\(" = "!stringr::str_detect(",
-                                            "stringr\\:\\:str\\_detect\\(stringr\\:\\:str\\_detect\\(" = "stringr::str_detect("
+                                            "stringr\\:\\:str\\_detect\\(stringr\\:\\:str\\_detect\\(" = "stringr::str_detect(",
+                                            "\\‘|\\’|\\‛|\\´|\\`" = "'"
                                           )
     )
     )
@@ -61,6 +62,8 @@ create_skip_logic_table <- function(survey_df) {
 
   return(skip_df)
 }
+
+
 
 
 
