@@ -80,7 +80,10 @@ create_skip_logic_table <- function(survey_df) {
 #'
 #'
 #'
-#' @param survey_df dataframe containing ´survey´ sheet of the XLS form.
+#' @param data dataframe. The dataset.
+#' @param identifier character. Column name of the survey ID. Default: ´identifier´.
+#' @param skip_logic_table dataframe. the skip logic and formulas table.
+#' @param formula_col character. Name of the column containing the formulas on the skip_logic_table.
 #'
 #'
 #' @return A list of two objects: 1. dataframe with skip logic applied. 2. change log
@@ -92,12 +95,17 @@ create_skip_logic_table <- function(survey_df) {
 
 
 apply_skip_logic <- function(data,
+                             identifier,
                              skip_logic_table,
                              formula_col) {
 
 
   if(is.null(data) | nrow(data)<=1 | !is.data.frame(data)){
     stop("Please provide the dataset. Dataset should contain at least 2 surveys/rows.")
+  }
+
+  if( !is.character(identifier) | (is.null(identifier) & is.na(match("identifier",names(data)))) | (!is.null(identifier) & is.na(match(identifier,names(data)))) ){
+    stop("Please provide the column name of ´survey ID´")
   }
 
   if(is.null(formula_col) | !is.character(formula_col) |
@@ -140,7 +148,7 @@ apply_skip_logic <- function(data,
 
 
 
-  change_log <- generate_change_log(start_data, data)
+  change_log <- generate_change_log(start_data, data, identifier)
 
 
   return_list[["data"]] <- data
