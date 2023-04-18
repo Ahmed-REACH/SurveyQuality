@@ -4,10 +4,16 @@
 \alias{apply_skip_logic}
 \title{Applies skip logic to dataframe (Work in progress)}
 \usage{
-apply_skip_logic(data, skip_logic_table, formula_col)
+apply_skip_logic(data, identifier, skip_logic_table, formula_col)
 }
 \arguments{
-\item{survey_df}{dataframe containing ´survey´ sheet of the XLS form.}
+\item{data}{dataframe. The dataset.}
+
+\item{identifier}{character. Column name of the survey ID. Default: ´identifier´.}
+
+\item{skip_logic_table}{dataframe. the skip logic and formulas table.}
+
+\item{formula_col}{character. Name of the column containing the formulas on the skip_logic_table.}
 }
 \value{
 A list of two objects: 1. dataframe with skip logic applied. 2. change log

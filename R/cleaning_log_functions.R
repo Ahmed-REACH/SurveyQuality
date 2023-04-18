@@ -38,12 +38,14 @@ generate_change_log <- function(data1,
 
 
   long1 <- data1 %>%
+    dplyr::mutate_all(as.character) %>%
     tidyr::pivot_longer(-match(identifier, names(data1)),
                         names_to = "question",
                         values_to = "old_value"
     )
 
   long2 <- data2 %>%
+    dplyr::mutate_all(as.character) %>%
     tidyr::pivot_longer(-match(identifier, names(data2)),
                         names_to = "question",
                         values_to = "new_value"
