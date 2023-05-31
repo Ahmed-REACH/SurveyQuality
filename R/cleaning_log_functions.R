@@ -6,6 +6,7 @@
 #' @param data1 dataframe. The first dataset, inclusive of unique identifier column.
 #' @param data2 dataframe. The second dataset, inclusive of unique identifier column.
 #' @param identifier column name of the survey ID. Default: ´identifier´.
+#' @param data1_priority Logical. only columns existent on data1 would be considered for both datatsets.
 #'
 #' @return A long table outlining each cell change (identified by the identifier) between the two datasets.
 #' @export
@@ -17,7 +18,8 @@
 
 generate_change_log <- function(data1,
                                   data2,
-                                  identifier = "identifier") {
+                                  identifier = "identifier",
+                                data1_priority = FALSE) {
 
   if( !is.character(identifier) | (is.null(identifier) & is.na(match("identifier",names(data1)))) | (!is.null(identifier) & is.na(match(identifier,names(data1)))) |
       (is.null(identifier) & is.na(match("identifier",names(data2)))) | (!is.null(identifier) & is.na(match(identifier,names(data2))))){
@@ -51,8 +53,16 @@ generate_change_log <- function(data1,
                         values_to = "new_value"
     )
 
-  tmp_cleaning_log <- dplyr::full_join(long1, long2) %>%
-    dplyr::filter(old_value != new_value)
+  if (data1_priority) {
+
+    tmp_cleaning_log <- dplyr::left_join(long1, long2) %>%
+      dplyr::filter(old_value != new_value)
+  } else {
+
+    tmp_cleaning_log <- dplyr::full_join(long1, long2) %>%
+      dplyr::filter(old_value != new_value)
+  }
+
 
   return(tmp_cleaning_log)
 }

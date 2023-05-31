@@ -4,7 +4,12 @@
 \alias{generate_change_log}
 \title{Generate change log with empty cleaning comments}
 \usage{
-generate_change_log(data1, data2, identifier = "identifier")
+generate_change_log(
+  data1,
+  data2,
+  identifier = "identifier",
+  data1_priority = FALSE
+)
 }
 \arguments{
 \item{data1}{dataframe. The first dataset, inclusive of unique identifier column.}
@@ -12,6 +17,8 @@ generate_change_log(data1, data2, identifier = "identifier")
 \item{data2}{dataframe. The second dataset, inclusive of unique identifier column.}
 
 \item{identifier}{column name of the survey ID. Default: ´identifier´.}
+
+\item{data1_priority}{Logical. only columns existent on data1 would be considered for both datatsets.}
 }
 \value{
 A long table outlining each cell change (identified by the identifier) between the two datasets.
