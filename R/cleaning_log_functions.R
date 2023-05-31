@@ -13,7 +13,7 @@
 #'
 #' @examples
 #' # Generate the cleaning log.
-#' \code change_log <- generate_change_log(raw_data, clean_data, "uuid")
+#' \code change_log <- generate_change_log(raw_data, clean_data, "uuid", data1_priority = T)
 
 
 generate_change_log <- function(data1,
@@ -53,16 +53,14 @@ generate_change_log <- function(data1,
                         values_to = "new_value"
     )
 
+  tmp_cleaning_log <- dplyr::full_join(long1, long2) %>%
+    dplyr::filter(is.na(old_value) | is.na(new_value) | old_value != new_value)
+
   if (data1_priority) {
 
-    tmp_cleaning_log <- dplyr::left_join(long1, long2) %>%
-      dplyr::filter(old_value != new_value)
-  } else {
-
-    tmp_cleaning_log <- dplyr::full_join(long1, long2) %>%
-      dplyr::filter(old_value != new_value)
+    tmp_cleaning_log <- tmp_cleaning_log %>%
+      dplyr::filter(question %in% colnames(data1))
   }
-
 
   return(tmp_cleaning_log)
 }

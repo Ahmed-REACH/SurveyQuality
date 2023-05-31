@@ -28,5 +28,5 @@ This function creates a change log by comparing two datasets.
 }
 \examples{
 # Generate the cleaning log.
-\code change_log <- generate_change_log(raw_data, clean_data, "uuid")
+\code change_log <- generate_change_log(raw_data, clean_data, "uuid", data1_priority = T)
 }
