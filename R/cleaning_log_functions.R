@@ -54,7 +54,8 @@ generate_change_log <- function(data1,
     )
 
   tmp_cleaning_log <- dplyr::full_join(long1, long2) %>%
-    dplyr::filter(is.na(old_value) | is.na(new_value) | old_value != new_value)
+    dplyr::filter(is.na(old_value) | is.na(new_value) | old_value != new_value) %>%
+    filter( !(is.na(old_value) & is.na(new_value)) )
 
   if (data1_priority) {
 
